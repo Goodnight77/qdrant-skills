@@ -14,4 +14,4 @@ Agent skills encoding deep Qdrant knowledge for coding agents.
 - [qdrant-version-upgrade](qdrant-version-upgrade/SKILL.md) — Safe upgrade paths, compatibility guarantees, and rolling upgrades.
 
 Skills strucure is hierarchical.
-You can use search: https://search.qdrant.tech/skills?query=your+query+here
+You can use search: https://skills.qdrant.tech/search?query=your+query+here
