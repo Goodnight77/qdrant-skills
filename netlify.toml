@@ -8,8 +8,8 @@
   status = 200
 
 [[redirects]]
-  from = "/search/*"
-  to = "https://search.qdrant.tech/:splat"
+  from = "/search*"
+  to = "https://search.qdrant.tech/skills/:splat"
   status = 200
   force = true
 
