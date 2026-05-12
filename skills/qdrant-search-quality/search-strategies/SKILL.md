@@ -65,4 +65,4 @@ Check how to set up in [Score Boosting docs](https://search.qdrant.tech/md/docum
 ## What NOT to Do
 
 - Use hybrid search before verifying pure vector search quality (adds complexity, may mask model issues)
-- Skip evaluation when adding relevance feedback (it's good to check on real queries that it actually could help)
+- Skip evaluation when adding relevance feedback — score the end-to-end pipeline to confirm it actually helps [Pipeline Output Quality](https://search.qdrant.tech/md/documentation/improve-search/pipeline-output-quality/)
