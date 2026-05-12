@@ -1,6 +1,6 @@
 ---
 name: qdrant-search-quality-diagnosis
-description: "Diagnoses Qdrant search quality issues. Use when someone reports 'results are bad', 'wrong results', 'not relevant results', 'missing matches', 'recall is low', 'approximate search worse than exact', 'which embedding model', or 'quality dropped after quantization'. Also use when search quality degrades without obvious changes."
+description: "Diagnoses Qdrant search quality issues. Use when someone reports 'results are bad', 'wrong results', 'not relevant results', 'missing matches', 'recall is low', 'approximate search worse than exact', 'which embedding model', 'quality dropped after quantization', 'how to measure retrieval quality', 'build a golden set', 'ground truth dataset', or 'how to score recall@k'. Also use when search quality degrades without obvious changes."
 ---
 
 # How to Diagnose Bad Search Quality
@@ -11,7 +11,8 @@ Before tuning, establish baselines. Use exact KNN as ground truth, compare again
 
 Use when: results are irrelevant or missing expected matches and you need to isolate the cause.
 
-- Test with `exact=true` to bypass HNSW approximation [Search API](https://search.qdrant.tech/md/documentation/tutorials-search-engineering/retrieval-quality/?s=standard-mode-vs-exact-search)
+- For a no-code quick check, use the Web UI's ANN Recall tab to compare approximate vs exact `recall@k` [Web UI ANN Recall](https://search.qdrant.tech/md/documentation/tutorials-search-engineering/ann-recall/?s=measure-ann-recall-with-the-web-ui)
+- For the same comparison in code (CI gating, regression tests), run each query twice — once approximate, once with `exact=true` — and compute `recall@k` from the overlap [ANN recall in CI](https://search.qdrant.tech/md/documentation/tutorials-search-engineering/ann-recall/?s=automate-in-ci-with-python)
 - Exact search bad = model or search pipeline problem. Exact good, approximate bad = tune HNSW.
 - Check if quantization degrades quality (compare with and without)
 - Check if filters are too restrictive (then you might need to use ACORN)
@@ -37,13 +38,22 @@ Use when: exact search also returns bad results.
 
 Check [Qdrant team recommendations on how to choose an embedding model](https://search.qdrant.tech/md/articles/how-to-choose-an-embedding-model/).
 
-Test top 3 MTEB models on 100-1000 sample queries. [Hosted Qdrant inference](https://search.qdrant.tech/md/documentation/inference/)
+Test top 3 MTEB models on 100-1000 sample queries [Hosted Qdrant inference](https://search.qdrant.tech/md/documentation/inference/). Score them against a labeled set to compare apples to apples [Measuring Retrieval Relevance](https://search.qdrant.tech/md/documentation/improve-search/retrieval-relevance/).
 
 ## Unoptimized Search Pipeline
 
 Use when: exact search also returns bad results and model choice is confirmed by user.
 
 Optimize search according to advanced search-strategies skill.
+
+## Need a Labeled Baseline to Score Recall, MRR, or NDCG
+
+Use when: user has no golden set, asks "how do I know if my search is good?", or needs to gate releases on a retrieval metric.
+
+- Build a labeled query set — human, log-based, or LLM-synthetic — and score retrieval with `ranx` [Measuring Retrieval Relevance](https://search.qdrant.tech/md/documentation/improve-search/retrieval-relevance/)
+- Pick the metric by usage: `Recall@k` for RAG, `MRR`/`Hits@1` for single-answer, `NDCG@k` for re-ranking [Choosing the metric](https://search.qdrant.tech/md/documentation/improve-search/retrieval-relevance/?s=choosing-the-right-metric)
+- For full RAG pipelines, also score generation with Ragas and use the retrieval-vs-generation 2x2 to isolate regressions [Pipeline Output Quality](https://search.qdrant.tech/md/documentation/improve-search/pipeline-output-quality/)
+- Gate CI on a per-metric threshold to catch regressions from embedding-model swaps, prompt changes, or index config changes
 
 ## What NOT to Do
 
