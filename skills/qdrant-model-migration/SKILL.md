@@ -79,7 +79,7 @@ For 400GB+ datasets, expect days. For small datasets (<25MB), re-indexing from s
 
 ## What NOT to Do
 
-- Assume you can add named vectors to an existing collection on pre-v1.18 servers — check your server version first (`GET /` returns it)
+- Assume you can add named vectors to an existing collection on pre-v1.18 servers; check your server version first (`GET /` returns it)
 - Delete the old collection before verifying the new one
 - Forget to update the query embedding model in your application code
 - Skip payload migration when using alias swap (aliases redirect queries, they do not copy data)
