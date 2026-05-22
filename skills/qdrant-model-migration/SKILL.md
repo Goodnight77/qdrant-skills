@@ -5,7 +5,7 @@ description: "Guides embedding model migration in Qdrant without downtime. Use w
 
 # What to Do When Changing Embedding Models
 
-Vectors from different models are incompatible. You cannot mix old and new embeddings in the same vector space. You also cannot add new named vector fields to an existing collection. All named vectors must be defined at collection creation time. Both migration strategies below require creating a new collection.
+Vectors from different models are incompatible. You cannot mix old and new embeddings in the same vector space. All named vectors must be defined at collection creation time. Both migration strategies below require creating a new collection.
 
 - Understand collection aliases before choosing a strategy [Collection aliases](https://search.qdrant.tech/md/documentation/manage-data/collections/?s=collection-aliases)
 
@@ -19,9 +19,17 @@ You MUST re-embed if: changing model provider (OpenAI to Cohere), changing archi
 You CAN avoid re-embedding if: using Matryoshka models (use `dimensions` parameter to output lower-dimensional embeddings, learn linear transformation from sample data, some recall loss, good for 100M+ datasets). Or changing quantization (binary to scalar): Qdrant re-quantizes automatically. [Quantization](https://search.qdrant.tech/md/documentation/manage-data/quantization/)
 
 
-## Need Zero Downtime (Alias Swap)
+## Need Zero Downtime
 
 Use when: production must stay available. Recommended for model replacement at scale.
+
+- If the cluster is v1.18 or later AND the collection has named vectors:
+
+  - Add the new vector field directly to the existing collection [Update vector schema](https://search.qdrant.tech/md/documentation/manage-data/collections/?s=update-vector-schema)
+  - Re-embed all data in the background using `UpdateVectors` [Update vectors](https://search.qdrant.tech/md/documentation/manage-data/points/?s=update-vectors)
+  - Verify search quality, then delete old vector field
+
+- If the cluster is v1.17 or earlier OR the collection doesn't have named vectors:
 
 - Create a new collection with the new model's dimensions and distance metric
 - Re-embed all data into the new collection in the background
@@ -36,9 +44,12 @@ Careful, the alias swap only redirects queries. Payloads must be re-uploaded sep
 
 Use when: A/B testing models, multi-modal (dense + sparse), or evaluating a new model before committing.
 
-- v1.18+: Use `PUT /collections/{name}/vectors/{new_vector_name}` to add the new vector field directly to the existing collection, then backfill with `UpdateVectors`.
+- If the cluster is v1.18 or later:
 
-- Pre-v1.18: You cannot add a named vector to an existing collection. Create a new collection with both vector fields defined upfront:
+  - Add the new vector field directly to the existing collection [Update vector schema](https://search.qdrant.tech/md/documentation/manage-data/collections/?s=update-vector-schema)
+  - Backfill new model embeddings incrementally using `UpdateVectors` [Update vectors](https://search.qdrant.tech/md/documentation/manage-data/points/?s=update-vectors)
+
+- If the cluster is v1.17 or earlier: You cannot add a named vector to an existing collection. Create a new collection with both vector fields defined upfront:
 
   - Create new collection with old and new named vectors both defined [Collection with multiple vectors](https://search.qdrant.tech/md/documentation/manage-data/collections/?s=collection-with-multiple-vectors)
   - Migrate data from old collection, preserving existing vectors in the old named field
@@ -79,7 +90,7 @@ For 400GB+ datasets, expect days. For small datasets (<25MB), re-indexing from s
 
 ## What NOT to Do
 
-- Assume you can add named vectors to an existing collection on pre-v1.18 servers; check your server version first (`GET /` returns it)
+- Assume you can add named vectors to an existing collection on v1.17 or earlier servers; check your server version first
 - Delete the old collection before verifying the new one
 - Forget to update the query embedding model in your application code
 - Skip payload migration when using alias swap (aliases redirect queries, they do not copy data)
