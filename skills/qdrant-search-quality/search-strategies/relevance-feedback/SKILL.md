@@ -72,9 +72,9 @@ Only score a small set of seed documents. Five seeds is a robust default across 
   - set `feedback` to a list of items where each item contains:
     - `example=<seed vector, same embedding model as for `target`>` (also possible to use Qdrant Cloud Inference)
     - `score=<feedback model score>`
-- don't forget to assign `using` to retriever's handle, we operate in retriever's vector space. 
-- set `strategy` to `naive` with your calibrated parameters
-- set `limit` to the number of final results you need and use the RF results directly as final results.
+  - set `using` to retriever's handle, RF operates in retriever's vector space. 
+  - set `strategy` to `naive` with your calibrated parameters
+  - set `limit` to the number of final results you need and use the RF results directly as final results.
 
  Check the [Relevance Feedback Query API  documentation](https://search.qdrant.tech/md/documentation/search/search-relevance/?s=relevance-feedback) and study code/methods of the relevant SDK before filling in anything.
 
