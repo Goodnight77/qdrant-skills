@@ -19,14 +19,17 @@ LINK_RE = re.compile(r'\[([^\]]*)\]\(([^)]+)\)')
 
 
 def make_absolute(filepath, url, public_dir):
-    # Leave anchors, root-relative paths, and anything carrying a scheme
-    # (http, https, mailto, …) untouched.
-    if url.startswith(("/", "#")) or urlsplit(url).scheme:
+    # Leave in-page anchors and anything carrying a scheme (http, https,
+    # mailto, …) untouched. Root-relative ("/…") and directory-relative links
+    # are both resolved to an absolute site URL below.
+    if url.startswith("#") or urlsplit(url).scheme:
         return url
     # URL path of the file's directory relative to the site root.
     file_dir = os.path.relpath(os.path.dirname(filepath), public_dir)
     base_path = "/" if file_dir == os.curdir else "/" + file_dir.replace(os.sep, "/") + "/"
-    # Resolve the link against its directory, then against the site origin.
+    # Resolve the link against its directory, then against the site origin. A
+    # leading "/" makes urljoin discard base_path, so root-relative links are
+    # attached directly to the origin.
     return urljoin(BASE_URL, urljoin(base_path, url))
 
 

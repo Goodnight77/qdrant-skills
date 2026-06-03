@@ -38,9 +38,13 @@ class TestMakeAbsolute(unittest.TestCase):
         original = "http://example.com/docs"
         self.assertEqual(make_absolute("public/foo/SKILL.md", original, "public"), original)
 
-    def test_root_relative_link_unchanged(self):
-        original = "/md/documentation/something/"
-        self.assertEqual(make_absolute("public/foo/SKILL.md", original, "public"), original)
+    def test_root_relative_link_absolutized(self):
+        url = make_absolute("public/foo/SKILL.md", "/md/documentation/something/", "public")
+        self.assertEqual(url, f"{BASE_URL}/md/documentation/something/")
+
+    def test_root_relative_link_preserves_query(self):
+        url = make_absolute("public/foo/SKILL.md", "/md/collections/?s=aliases", "public")
+        self.assertEqual(url, f"{BASE_URL}/md/collections/?s=aliases")
 
     def test_anchor_unchanged(self):
         original = "#section-heading"
@@ -87,11 +91,13 @@ class TestRun(unittest.TestCase):
         run(self.tmp)
         self.assertEqual(self.read("qdrant-scaling/SKILL.md"), content)
 
-    def test_root_relative_links_not_changed(self):
-        content = "See [Docs](/md/documentation/something/) for info.\n"
-        self.write("foo/SKILL.md", content)
+    def test_root_relative_links_absolutized(self):
+        self.write("foo/SKILL.md", "See [Docs](/md/documentation/something/) for info.\n")
         run(self.tmp)
-        self.assertEqual(self.read("foo/SKILL.md"), content)
+        self.assertIn(
+            f"[Docs]({BASE_URL}/md/documentation/something/)",
+            self.read("foo/SKILL.md"),
+        )
 
     def test_mixed_links_in_one_file(self):
         self.write(
@@ -102,7 +108,7 @@ class TestRun(unittest.TestCase):
         result = self.read("foo/SKILL.md")
         self.assertIn(f"[Relative]({BASE_URL}/foo/bar/SKILL.md)", result)
         self.assertIn("[Absolute](https://example.com)", result)
-        self.assertIn("[Root](/md/x)", result)
+        self.assertIn(f"[Root]({BASE_URL}/md/x)", result)
 
     def test_non_md_file_untouched(self):
         self.write("foo/config.json", '{"link": "bar/baz.md"}\n')
