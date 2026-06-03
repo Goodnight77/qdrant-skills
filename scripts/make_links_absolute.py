@@ -3,22 +3,31 @@
 
 import os
 import re
+from urllib.parse import urljoin, urlsplit
 
-BASE_URL = "https://skills.qdrant.tech"
+# On Netlify, DEPLOY_PRIME_URL / URL are injected with the deploy's real domain
+# (including branch deploys and deploy previews). Fall back to the production
+# domain for local builds.
+BASE_URL = (
+    os.environ.get("DEPLOY_PRIME_URL")
+    or os.environ.get("URL")
+    or "https://skills.qdrant.tech"
+).rstrip("/")
 PUBLIC_DIR = "public"
 
 LINK_RE = re.compile(r'\[([^\]]*)\]\(([^)]+)\)')
 
 
 def make_absolute(filepath, url, public_dir):
-    if url.startswith(("http://", "https://", "/", "#", "mailto:")):
+    # Leave anchors, root-relative paths, and anything carrying a scheme
+    # (http, https, mailto, …) untouched.
+    if url.startswith(("/", "#")) or urlsplit(url).scheme:
         return url
+    # URL path of the file's directory relative to the site root.
     file_dir = os.path.relpath(os.path.dirname(filepath), public_dir)
-    if file_dir == ".":
-        abs_path = url
-    else:
-        abs_path = os.path.normpath(os.path.join(file_dir, url))
-    return f"{BASE_URL}/{abs_path}"
+    base_path = "/" if file_dir == os.curdir else "/" + file_dir.replace(os.sep, "/") + "/"
+    # Resolve the link against its directory, then against the site origin.
+    return urljoin(BASE_URL, urljoin(base_path, url))
 
 
 def run(public_dir):

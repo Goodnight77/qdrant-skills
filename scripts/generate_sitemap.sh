@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_URL="${SITE_URL:-https://skills.qdrant.tech}"
+BASE_URL="${SITE_URL:-${DEPLOY_PRIME_URL:-${URL:-https://skills.qdrant.tech}}}"
+BASE_URL="${BASE_URL%/}"
 PUBLIC_DIR="${1:-public}"
 OUTPUT="${PUBLIC_DIR}/sitemap.xml"
 TODAY=$(date -u +"%Y-%m-%d")
