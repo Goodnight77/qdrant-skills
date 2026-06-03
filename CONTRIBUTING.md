@@ -86,6 +86,32 @@ Leaf skills contain the guidance an agent uses to help users.
 - Target 40-80 lines; if over 80, consider splitting into hub + sub-skills
 
 
+## Testing
+
+### Build script tests
+
+`scripts/test_make_links_absolute.py` covers the link-rewriting step in `build.sh`. It tests the two public entry points of `scripts/make_links_absolute.py`:
+
+- **`make_absolute(filepath, url, public_dir)`** — resolves a single URL relative to a file path. Unit tests cover: simple relative links at root and nested levels, `../` traversal, and all the passthrough cases (`https://`, `http://`, `/`, `#`, `mailto:`).
+- **`run(public_dir)`** — walks a directory and rewrites all relative markdown links in every `.md` file. Integration tests write real files to a temporary directory and verify the output.
+
+Run manually from the repo root:
+
+```
+cd scripts && python3 -m unittest test_make_links_absolute -v
+```
+
+### Skill validation
+
+`scripts/validate_skills.py` checks all `SKILL.md` files against the quality rules described in the Writing a skill section above. Run it from the repo root:
+
+```
+python3 scripts/validate_skills.py
+```
+
+It exits non-zero if any hard `FAIL` rules are violated.
+
+
 ## Conventions
 
 ### Commit messages
