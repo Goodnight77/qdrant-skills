@@ -38,7 +38,7 @@ Use skills.qdrant.tech
 
 This keeps your agent's context focused: it fetches only the skill relevant to your current problem rather than loading everything upfront.
 
-If you prefer skills to be available offline or without passing URLs manually, you can install them locally. Refer to [Installation](#installation) below.
+If you prefer skills to be available offline or without passing URLs manually, you can install them locally. Refer to the [Installation](#installation) section.
 
 ## Quick Start
 
