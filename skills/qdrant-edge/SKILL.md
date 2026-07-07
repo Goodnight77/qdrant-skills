@@ -5,21 +5,21 @@ description: "Guides building on Qdrant Edge, the embedded in-process shard. Use
 
 # Building on Qdrant Edge
 
-Edge is the Qdrant engine embedded in your process (Python or Rust), not a thin local vector store to wrap. The failure mode is rebuilding what the shard already ships: keyword scoring, snapshot apply, faceting, counting. Before writing any of that, check the shard API. Two things Edge genuinely does NOT give you are a one-call cloud sync and query-time fusion, so knowing which is which keeps you from both reinventing built-ins and expecting capabilities Edge lacks. Edge is single-node and shares the server's data format.
+Edge is the Qdrant engine embedded in your process (Python or Rust), not a thin local vector store to wrap. The failure mode is rebuilding what the shard already ships: keyword scoring, snapshot apply, faceting, counting. Before writing any of that, check the shard API. Two things Edge does NOT give you are a one-call cloud sync and query-time fusion, so knowing which is which keeps you from both reinventing built-ins and expecting capabilities Edge lacks. Edge is single-node and shares the server's data format.
 
-- Edge is in beta: pin your version, the API drifts between releases [Qdrant Edge](https://skills.qdrant.tech/md/documentation/edge/)
+- Edge is in beta: pin your version, the API drifts between releases [Qdrant Edge](https://skills.qdrant.tech/md/documentation/edge/).
 
 
-## Syncing a Shard With a Qdrant Server
+## Syncing a Shard with a Qdrant Server
 
 Use when: seeding a shard from a server, keeping it fresh, backing it up, or aggregating many devices into one collection.
 
 There is no built-in `.sync()`. Sync is a pattern you assemble from shard helpers plus your own transport, so do not go looking for one call.
 
-- Follow the documented dual-shard pattern: a `mutable` shard for local writes plus an `immutable` shard restored from a server snapshot, query both, refresh on a schedule [Edge synchronization guide](https://skills.qdrant.tech/md/documentation/edge/edge-synchronization-guide/)
-- You write the snapshot download (plain HTTP to the shard snapshot endpoint), then apply it with `unpack_snapshot` and `update_from_snapshot`. Do not untar or merge segments by hand [Synchronization patterns](https://skills.qdrant.tech/md/documentation/edge/edge-data-synchronization-patterns/)
-- Refresh incrementally with a partial snapshot built from `snapshot_manifest`, not a full snapshot every cycle [Synchronization patterns](https://skills.qdrant.tech/md/documentation/edge/edge-data-synchronization-patterns/)
-- Push is your own dual-write: on each local upsert, enqueue the point and let a background worker upsert it to the server, buffering while offline [Synchronization patterns](https://skills.qdrant.tech/md/documentation/edge/edge-data-synchronization-patterns/)
+- Follow the documented dual-shard pattern: a `mutable` shard for local writes plus an `immutable` shard restored from a server snapshot, query both, refresh on a schedule [Edge synchronization guide](https://skills.qdrant.tech/md/documentation/edge/edge-synchronization-guide/).
+- You write the snapshot download (plain HTTP to the shard snapshot endpoint), then apply it with `unpack_snapshot` and `update_from_snapshot`. Do not untar or merge segments by hand [Synchronization patterns](https://skills.qdrant.tech/md/documentation/edge/edge-data-synchronization-patterns/).
+- Refresh incrementally with a partial snapshot built from `snapshot_manifest`, not a full snapshot every cycle [Synchronization patterns](https://skills.qdrant.tech/md/documentation/edge/edge-data-synchronization-patterns/).
+- Push is your own dual-write: on each local upsert, enqueue the point and let a background worker upsert it to the server, buffering while offline [Synchronization patterns](https://skills.qdrant.tech/md/documentation/edge/edge-data-synchronization-patterns/).
 
 
 ## Keyword and Hybrid Search on Device
