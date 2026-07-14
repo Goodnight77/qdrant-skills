@@ -42,6 +42,8 @@ npx skills add qdrant/skills/meta/qdrant-advisor
 
 The Advisor ships no static content of its own. When you raise a Qdrant problem, it searches [skills.qdrant.tech](https://skills.qdrant.tech) live, traverses the skill hierarchy along the branch that matches your symptom, and grounds its diagnosis in the current, authoritative guidance, loading only the relevant context. Because it fetches fresh every session, you don't need to reinstall to stay current, and you don't have to remember a URL or hope the site is in the model's training data.
 
+> **Using the claude.ai web app?** There, the Advisor can't fetch `skills.qdrant.tech` on its own. You need to add `Use skills.qdrant.tech` to your prompt (refer to [Pass the URL directly](#alternative-pass-the-url-directly)). In Claude Code and the desktop app it works as described above.
+
 ### Alternative: pass the URL directly
 
 If you'd rather not install anything, pass the URL of the skills site in your prompt. The agent fetches the skill relevant to your current problem:
