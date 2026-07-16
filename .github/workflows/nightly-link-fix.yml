@@ -22,7 +22,7 @@ jobs:
         id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --verbose --no-progress --accept 100..=403,405..=999 '**/*.md'
+          args: --verbose --no-progress --accept-timeouts --accept 100..=403,405..=999 '**/*.md'
           format: json
           output: lychee/out.json
           fail: false
@@ -86,7 +86,7 @@ jobs:
             rendered from the qdrant/landing_page repository. That repo is checked out read-only
             at ./landing_page with full git history.
 
-            For each broken link:
+            For each broken 404 (ignore other errors like network errors):
             1. Read lychee/out.json to get the list of broken links and the files that reference them.
             2. Map the broken skills.qdrant.tech/md/<path> URL to the corresponding content file at
                landing_page/qdrant-landing/content/<path>.
