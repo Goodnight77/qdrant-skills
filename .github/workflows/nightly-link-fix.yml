@@ -77,7 +77,7 @@ jobs:
           branch_prefix: "fix-broken-links/"
           claude_args: |
             --max-turns 40
-            --allowedTools "Read,Grep,Glob,Edit,Bash(git log:*),Bash(git show:*),Bash(git diff:*),Bash(gh issue create:*)"
+            --allowedTools "Read,Grep,Glob,Edit,Bash(git log:*),Bash(git show:*),Bash(git diff:*),Bash(git add:*),Bash(git checkout -b:*),Bash(git commit:*),Bash(git push:*),Bash(gh pr create:*),Bash(gh issue create:*)"
           prompt: |
             A nightly link check found broken links (HTTP 404) in this repository (qdrant/skills).
             The Lychee JSON report is at lychee/out.json.
