@@ -75,6 +75,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           base_branch: main
           branch_prefix: "fix-broken-links/"
+          display_report: true
           claude_args: |
             --model claude-sonnet-5
             --max-turns 40
@@ -109,8 +110,8 @@ jobs:
             - If no broken links were found, do nothing.
             - If you fixed at least one link, create a pull request against main. Title it
               "fix: update N broken link(s) found by nightly link check" (with the actual count). In the
-              description, list each fixed link as "old -> new", and list any unresolved links under an
-              "Unresolved" heading with a short reason why no replacement could be found.
+              description, include a table listing each fixed link (old & new columns), and list any unresolved
+              links under an "Unresolved" heading with a short reason why no replacement could be found.
             - If you could not confidently fix any link, do not open a pull request. Instead open a GitHub
               issue titled "Nightly link check: N broken link(s) need manual review" (with the actual count)
               listing each broken link, the file(s) that reference it, and why no replacement could be found.
