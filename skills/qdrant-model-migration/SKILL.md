@@ -18,9 +18,9 @@ You MUST re-embed if: changing model provider (OpenAI to Cohere), changing archi
 
 You do NOT need to re-embed existing dense vectors if:
 
-  - Adding sparse vectors for hybrid search: generate only the sparse vectors. On v1.18+, add the sparse field to the existing collection and backfill it with `UpdateVectors`. On v1.17 or earlier, copy the dense vectors into the new collection instead of recomputing them [Update vectors](https://skills.qdrant.tech/md/documentation/manage-data/points/?s=update-vectors)
-  - Using Matryoshka models: use the `dimensions` parameter to output lower-dimensional embeddings (some recall loss, good for 100M+ datasets)
-  - Changing quantization (binary to scalar): Qdrant re-quantizes automatically [Quantization](https://skills.qdrant.tech/md/documentation/manage-data/quantization/)
+- Adding sparse vectors for hybrid search: generate only the sparse vectors. On v1.18+, add the sparse field to the existing collection and backfill it with `UpdateVectors`. On v1.17 or earlier, copy the dense vectors into the new collection instead of recomputing them [Update vectors](https://skills.qdrant.tech/md/documentation/manage-data/points/?s=update-vectors)
+- Using Matryoshka models: use the `dimensions` parameter to output lower-dimensional embeddings (some recall loss, good for 100M+ datasets)
+- Changing quantization (binary to scalar): Qdrant re-quantizes automatically [Quantization](https://skills.qdrant.tech/md/documentation/manage-data/quantization/)
 
 
 ## Need Zero Downtime
@@ -75,9 +75,8 @@ Use when: adding sparse/BM25 vectors to an existing dense-only collection. Most 
 
 - If the cluster is v1.17 or earlier, you cannot add sparse vectors to an existing collection. Recreate it:
 
-  - Scroll the old collection with `with_vectors=True` to copy the dense vectors, and generate only the sparse vectors
   - Create new collection with both dense and sparse vector configs defined
-  - Re-embed all data with both dense and sparse models
+  - Scroll the old collection with `with_vectors=True` to copy the dense vectors, and generate only the sparse vectors
   - Migrate payloads, swap alias
 
 Sparse vectors at chunk level have different TF-IDF characteristics than document level. Test retrieval quality after migration, especially for non-English text without stop-word removal.
