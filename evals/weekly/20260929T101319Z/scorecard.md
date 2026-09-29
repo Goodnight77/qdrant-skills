@@ -182,8 +182,8 @@ _± SE is one within-week standard error of the paired per-prompt must-coverage 
 
 **Spend (actual $ spent, all runs):**
 - generation: $6.73  (haiku $2.22, sonnet $4.51)
-- judge (Opus): $0.00
-- **total: $6.73**
+- judge (Opus): $11.90
+- **total: $18.63**
 
 **Time (generation phase):**
 - runs timed: 248
