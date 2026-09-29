@@ -70,11 +70,12 @@ If you anticipate future model migrations, define both vector fields upfront at 
 
 Use when: adding sparse/BM25 vectors to an existing dense-only collection. Most common migration pattern.
 
-   - If the cluster is v1.18 or later, add the sparse vector field directly, even if the dense vector is unnamed [Update vector schema](https://skills.qdrant.tech/md/documentation/manage-data/collections/?s=update-vector-schema)
-     - Generate sparse vectors for existing points and backfill with `UpdateVectors`; existing dense vectors stay as they are [Update vectors](https://skills.qdrant.tech/md/documentation/manage-data/points/?s=update-vectors)
+- If the cluster is v1.18 or later, add the sparse vector field directly, even if the dense vector is unnamed [Update vector schema](https://skills.qdrant.tech/md/documentation/manage-data/collections/?s=update-vector-schema)
+  - Generate sparse vectors for existing points and backfill with `UpdateVectors`; existing dense vectors stay as they are [Update vectors](https://skills.qdrant.tech/md/documentation/manage-data/points/?s=update-vectors)
 
-- If the cluster is v1.17 or earlier, you cannot add sparse vectors to an existing collection that uses a default (unnamed) dense vector. Must recreate:
+- If the cluster is v1.17 or earlier, you cannot add sparse vectors to an existing collection. Recreate it:
 
+  - Scroll the old collection with `with_vectors=True` to copy the dense vectors, and generate only the sparse vectors
   - Create new collection with both dense and sparse vector configs defined
   - Re-embed all data with both dense and sparse models
   - Migrate payloads, swap alias
